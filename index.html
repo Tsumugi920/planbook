@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="planbook —— 纯本地化的旅行行程规划工具：多日行程、预算跟踪、打包清单，数据存 localStorage，支持 JSON 导入导出。" />
+  <title>planbook · 旅行行程规划</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">🧭</span>
+        <div class="brand-text">
+          <h1>planbook</h1>
+          <p>旅行行程规划 · 数据留在本地</p>
+        </div>
+      </div>
+      <div class="header-stats" id="header-stats"></div>
+    </header>
+
+    <nav class="tabs" id="tabs" aria-label="功能导航">
+      <button type="button" data-tab="trip" class="active">📅 行程</button>
+      <button type="button" data-tab="budget">💰 预算</button>
+      <button type="button" data-tab="packing">🎒 打包清单</button>
+      <button type="button" data-tab="data">🗂️ 数据管理</button>
+    </nav>
+
+    <main>
+      <!-- 行程 -->
+      <section id="tab-trip" class="tab-panel active" aria-label="行程">
+        <div class="card trip-bar">
+          <label class="trip-title-label">
+            行程名称
+            <input id="trip-title" type="text" maxlength="40" placeholder="给这次旅行起个名字" data-change="trip-title" />
+          </label>
+          <button id="add-day" class="btn primary" type="button">➕ 添加一天</button>
+        </div>
+        <div id="days" class="days"></div>
+      </section>
+
+      <!-- 预算 -->
+      <section id="tab-budget" class="tab-panel" aria-label="预算">
+        <div id="budget-stats" class="stat-cards"></div>
+
+        <form id="expense-form" class="card form-card" autocomplete="off">
+          <h3 id="expense-form-title">记一笔支出</h3>
+          <div class="form-grid">
+            <label>日期<input type="date" name="exp-date" /></label>
+            <label>类别<select name="exp-category"></select></label>
+            <label>金额（元）<input type="number" name="exp-amount" min="0" step="0.01" placeholder="0.00" required /></label>
+            <label class="grow">备注<input type="text" name="exp-note" maxlength="60" placeholder="例如：高铁票" /></label>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">记一笔</button>
+            <button class="btn ghost cancel-edit" type="button" data-action="cancel-edit-expense">取消编辑</button>
+          </div>
+        </form>
+
+        <div id="budget-breakdown" class="card"></div>
+        <div id="expense-list" class="card"></div>
+      </section>
+
+      <!-- 打包清单 -->
+      <section id="tab-packing" class="tab-panel" aria-label="打包清单">
+        <div id="packing-progress" class="card"></div>
+
+        <form id="packing-form" class="card form-card" autocomplete="off">
+          <h3>添加物品</h3>
+          <div class="form-grid packing-grid">
+            <label class="grow">物品<input type="text" name="pack-text" maxlength="40" placeholder="例如：充电宝" required /></label>
+            <label>分类<select name="pack-category"></select></label>
+          </div>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">添加</button>
+            <button class="btn ghost cancel-edit" type="button" data-action="cancel-edit-packing">取消编辑</button>
+          </div>
+        </form>
+
+        <div id="packing-list" class="pack-groups"></div>
+      </section>
+
+      <!-- 数据管理 -->
+      <section id="tab-data" class="tab-panel" aria-label="数据管理">
+        <div class="card">
+          <h3>备份与恢复</h3>
+          <p class="hint">所有数据仅保存在当前浏览器的 localStorage 中，不会上传到任何服务器。清除浏览器数据或换设备前，请先导出 JSON 备份。</p>
+          <div class="btn-row">
+            <button id="btn-export" class="btn primary" type="button">⬇️ 导出 JSON</button>
+            <button id="btn-import" class="btn" type="button">⬆️ 导入 JSON</button>
+            <button id="btn-sample" class="btn ghost" type="button">🧪 恢复示例数据</button>
+            <button id="btn-clear" class="btn danger" type="button">🗑️ 清空所有数据</button>
+          </div>
+        </div>
+        <div class="card" id="data-summary"></div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>planbook · 纯静态单页应用，无后端、无构建，数据只留在你的浏览器里。</p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="import-file" accept=".json,application/json" hidden />
+  <script src="app.js"></script>
+</body>
+</html>
